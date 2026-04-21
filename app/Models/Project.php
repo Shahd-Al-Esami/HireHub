@@ -85,7 +85,7 @@ class Project extends Model
 ////////////////scopes
  public function scopeOpenProjects(Builder $query)
     {
-        return $query->where('status',ProjectStatusEnum::OPEN->value);
+        return $query->where('status',ProjectStatusEnum::OPEN);
     }
 
      public function scopeMinBudget(Builder $query,$amount)

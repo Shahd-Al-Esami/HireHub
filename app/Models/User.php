@@ -124,7 +124,7 @@ class User extends Authenticatable
 
     public function scopeFreelancers(Builder $query)
     {
-        return $query->where('role', UserRoleEnum::FREELANCER->value);
+        return $query->where('role', UserRoleEnum::FREELANCER);
     }
  public function scopeVerified(Builder $query)
     {

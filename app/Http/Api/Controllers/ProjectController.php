@@ -2,6 +2,8 @@
 
 namespace App\Http\Api\Controllers;
 
+use App\Actions\Project\ShowProjectCard;
+use App\Actions\Project\StoreProject;
 use App\Http\Api\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Resources\ProjectResource;
@@ -33,32 +35,21 @@ public function getProjectsByThisMonth(){
     return ProjectResource::collection($projects);
 }
 
-    // public function store(StoreProjectRequest $request)
-    // {
-    //     $project = $this->service->store($request->validated());
+    public function store(StoreProject $action,StoreProjectRequest $request)
+    {
+        $project = $action->store($request->validated());
 
-    //     return new ProjectResource($project);
-    // }
+        return new ProjectResource($project);
+    }
 
-    // public function show(Project $project)
-    // {
-    //     return new ProjectResource(
-    //         $this->service->show($project)
-    //     );
-    // }
+    public function show(ShowProjectCard $action, Project $project)
+    {   $project=$action->show($project);
 
-    // public function update(UpdateProjectRequest $request, Project $project)
-    // {
-    //     $project = $this->service->update($project, $request->validated());
+        return new ProjectResource(
+            $project
+        );
+    }
 
-    //     return new ProjectResource($project);
-    // }
+  
 
-    // public function destroy(Project $project)
-    // {
-    //     $this->service->delete($project);
-
-    //     return response()->json([
-    //         'message' => 'Deleted successfully'
-    //     ]);}
     }

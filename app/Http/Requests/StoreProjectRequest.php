@@ -7,18 +7,35 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Enums\UserRoleEnum;
 class StoreProjectRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
+  
     public function authorize(): bool
     {
-         return Auth::check() && Auth::user()->role=== 'client';
+        $user = Auth::user();
+
+        if (!$user) {
+            $this->throwApi(401, 'يجب تسجيل الدخول أولاً.');
+        }
+
+        if ($user->role !== UserRoleEnum::CLIENT) {
+            $this->throwApi(403, 'غير مصرح: هذا الإجراء مخصص للعملاء (Clients) فقط.');
+        }
+
+        return true;  
+          }
+
+    protected function throwApi(int $status, string $message): void
+    {
+        throw new HttpResponseException(
+            response()->json(['message' => $message], $status)
+        );
     }
-
-
 
 
 
@@ -76,7 +93,7 @@ class StoreProjectRequest extends FormRequest
                 },
             ],
 
-              'deadline' => ['required', 'date', 'after:today'],
+              'delivery_date' => ['required', 'date', 'after:today'],
               'status' => ['required','in:open,in_progress,closed'],
 
 

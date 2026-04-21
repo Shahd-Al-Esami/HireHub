@@ -51,7 +51,6 @@ public function projectsByThisMonth(){
     // public function show(Project $project)
     // {
     //     return $project->load(['user:id,name', 'tags:id,name','offers','review']);
-    //     return $project;
     // }
 
 

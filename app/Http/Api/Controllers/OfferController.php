@@ -14,13 +14,12 @@ class OfferController extends Controller
 
      public function __construct(protected StoreOffer $storeOffer) {}
 
-    public function store(StoreOfferRequest $request): JsonResponse
+    public function store(StoreOfferRequest $request, $project_id): JsonResponse
     {
         // 1. نمرر فقط البيانات النظيفة والمستخدم الموثق
-        $offer = $this->storeOffer->store(
-            $request->validated(),
+      $offer = $this->storeOffer->store($request->validated(), $project_id);
 
-        );
+
 return response()->json(['message' => 'تم تقديم العرض بنجاح', 'offer' => $offer], 201);
 
     }

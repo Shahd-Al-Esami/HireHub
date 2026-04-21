@@ -89,7 +89,7 @@ public function rating(): Attribute
 ///////////////scops
  public function scopeAvailableNow(Builder $query)
     {
-        return $query->where('availability_status', AvailabilityStatusEnum::AVAILABLE->value);
+        return $query->where('availability_status', AvailabilityStatusEnum::AVAILABLE);
     }
 
 

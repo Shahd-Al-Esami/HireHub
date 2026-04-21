@@ -3,7 +3,9 @@
 namespace App\Http\Api\Controllers;
 
 use App\Actions\Profile\ShowProfileFreelancer;
+use App\Actions\Profile\UpdateProfile;
 use App\Http\Api\Controllers\Controller;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
 use App\Models\Profile;
 use App\Services\ProfileService;
@@ -57,7 +59,11 @@ public function getTopRatedFreelancers(Request $request){
 
 
 
-
+  public function update(UpdateProfile $action,UpdateProfileRequest $request,Profile $profile)
+    {
+          $user=$action->update($profile,$request->validated(),);
+          return new ProfileResource($user);
+    }
 
 
 
@@ -104,10 +110,7 @@ public function getTopRatedFreelancers(Request $request){
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Profile $profile)
-    {
-        //
-    }
+
 
     /**
      * Remove the specified resource from storage.
