@@ -1,6 +1,7 @@
 <?php
 namespace App\Actions\Project;
 
+use App\Jobs\SendNewProjectCreatedJob;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -27,6 +28,7 @@ class StoreProject{
             if (!empty($tagIds)) {
                 $project->tags()->attach($tagIds);
             }
+            SendNewProjectCreatedJob::dispatch($project->client_id, $project->id);
             //flush cache for open projects to get the new project in the list of open projects
              Cache::tags(['projects'])->flush();
             return $project;

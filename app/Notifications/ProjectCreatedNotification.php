@@ -2,24 +2,24 @@
 
 namespace App\Notifications;
 
-use App\Models\Offer;
+use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class OfferCreatedNotification extends Notification implements ShouldQueue
+class ProjectCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-      protected Offer $offer;
+      protected Project $project;
 
-    public function __construct($offer)
+    public function __construct($project)
     {
-        $this->offer = $offer;
+        $this->project = $project;
     }
 
     public function via($notifiable)
@@ -30,12 +30,10 @@ class OfferCreatedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('New Offer Received')
+            ->subject('New project Received')
             ->greeting('Hello ' . $notifiable->first_name)
-            ->line('A new offer has been created on your project.')
-            ->line('Offer Price: ' . $this->offer->price)
-            ->line('From Freelancer: ' . $this->offer->user->first_name)
-            ->action('View Offer', url('/show-project/' .Offer::findOrFail( $this->offer->project_id)))
+            ->line('A new project has been created on your project.')
+            ->line('From Freelancer: ' . $this->project->user->first_name)
             ->line('Thank you for using HireHub!');
     }
     /**

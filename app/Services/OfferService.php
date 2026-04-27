@@ -2,6 +2,8 @@
 namespace App\Services;
 
 use App\Contracts\OfferRepositoryInterface;
+use App\Jobs\SendOfferAcceptdJob;
+use App\Jobs\SendOfferRejectedJob;
 use App\Models\Offer;
 use App\Models\Project;
 use App\Notifications\OfferAcceptedNotification;
@@ -20,7 +22,6 @@ class OfferService{
 
 public function storeOffer(array $data,int $project_id){
   $offer=$this->repo->storeOffer($data,$project_id);
-Project::findOrFail($project_id)->user->notify(new OfferCreatedNotification($offer));
 
     return $offer;
 }
@@ -40,7 +41,8 @@ public function acceptOffer(Offer $offer)
                 ->update(['status' => 'rejected']);
 
 
-$offer->user->notify(new OfferAcceptedNotification($offer));
+// $offer->user->notify(new OfferAcceptedNotification($offer));
+         SendOfferAcceptdJob::dispatch($offer->id);
              Cache::tags(['projects'])->flush();
 
 
@@ -50,7 +52,9 @@ $offer->user->notify(new OfferAcceptedNotification($offer));
 public function rejectOffer($offer){
 
     $this->repo->rejectOffer($offer);
-$offer->user->notify(new OfferRejectedNotification($offer));
+
+     SendOfferRejectedJob::dispatch($offer->id);
+// $offer->user->notify(new OfferRejectedNotification($offer));
 
 
         return true;
