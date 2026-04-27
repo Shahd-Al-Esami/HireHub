@@ -12,6 +12,7 @@ class ProjectService
      * Summary of getOpenProjects
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
+   
     public function getOpenProjects()
     {
         $projects= Project::openProjects()->with(['user:id,first_name,last_name', 'tags:id,name','attachments','review'])->withCount('offers')->latest()

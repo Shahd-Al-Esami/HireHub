@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ProjectStatusEnum;
 use App\Enums\UserRoleEnum;
 use App\Models\Offer;
 use App\Models\Project;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class StoreOfferRequest extends FormRequest
 {
-    public function authorize(): bool
+     public function authorize(): bool
     {
         $user = Auth::user();
         $projectId = $this->route('project_id') ?? $this->input('project_id');
@@ -34,11 +35,11 @@ class StoreOfferRequest extends FormRequest
         }
 
         // 4. التحقق من حالة المشروع
-        if ($project->status !== 'open') {
+        if ($project->status !== ProjectStatusEnum::OPEN) {
             return $this->failAuth('project_closed');
         }
 
-        // 5. منع تكرار العرض
+    // //     // 5. منع تكرار العرض
         $exists = Offer::where('project_id', $projectId)
             ->where('freelancer_id', $user->id)
             ->exists();
@@ -50,9 +51,9 @@ class StoreOfferRequest extends FormRequest
         return true;
     }
 
-    /**
-     * إرجاع استجابة JSON موحدة عند فشل الصلاحية
-     */
+    // /**
+    //  * إرجاع استجابة JSON موحدة عند فشل الصلاحية
+    //  */
     protected function failAuth(string $reason): bool
     {
         $messages = [
@@ -65,7 +66,6 @@ class StoreOfferRequest extends FormRequest
 
         $message = $messages[$reason] ?? 'ليس لديك صلاحية تنفيذ هذا الإجراء.';
 
-        // ✅ للـ API: نرمي استثناء يعيد JSON بدلاً من redirect
         throw new HttpResponseException(
             response()->json(['errors' => ['auth' => $message]], 403)
         );

@@ -17,6 +17,10 @@ class Country extends Model
     {
         return $this->hasMany(City::class);
     }
+      /**
+       * Summary of users
+       * @return HasManyThrough<User, City, Country>
+       */
       public function users():HasManyThrough
     {
         return $this->hasManyThrough(User::class, City::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Api\Controllers;
 
+use App\Actions\Project\IndexProjects;
 use App\Actions\Project\ShowProjectCard;
 use App\Actions\Project\StoreProject;
 use App\Http\Api\Controllers\Controller;
@@ -18,6 +19,12 @@ protected ProjectService $service;
 $this->service = $service;
     }
 
+    public function index(IndexProjects $action)
+    {
+        $projects = $action->index();
+        return ProjectResource::collection($projects);
+
+    }
     public function getOpenProjects()
     {
         $projects = $this->service->getOpenProjects();
@@ -50,6 +57,6 @@ public function getProjectsByThisMonth(){
         );
     }
 
-  
+
 
     }

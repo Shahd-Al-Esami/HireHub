@@ -1,40 +1,46 @@
 <?php
+
 namespace App\Services;
 
+use App\Models\Profile;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class UserService{
-
-//filters
-/**
- * Summary of activeVerifiedFreelancers
- * @return \Illuminate\Pagination\LengthAwarePaginator
- */
-public function activeVerifiedFreelancers(){
-    $users= User::freelancers()->active()->verified()->latest()->paginate(15);
-    return $users;
-
+class UserService
+{
+    /**
+     * Get active verified freelancers with filters and sorting.
+     */
+    public function activeVerifiedFreelancers(Request $request): LengthAwarePaginator
+    {
 
 
-}
+        $query=Profile::availableNow()->whereHas('user', fn($q) => $q->freelancers()->active()->verified())->withCount('reviews')->withAvg('reviews', 'rate');
 
 
+        // Dynamic filtering
+        if ($request->filled('min_rating')) {
+            $query->having('reviews_avg_rate', '>=', $request->min_rating);
+        }
 
-//  public function index( $request): JsonResponse
-//     {
-//         $query = User::freelancers()->active()->verified() 
-//             ->with(['profile' => fn($q) => $q->select('user_id', 'hourly_rate', 'availability_status', 'skills_summary', 'image')]);
+        if ($request->filled('skill_ids')) {
+            $ids = array_map('intval', explode(',', $request->skill_ids));
+            $query->whereHas('skills', fn($q) => $q->whereIn('skills.id', $ids));
+        }
 
-//         if ($request->filled('skill')) {
-//             $skills = explode(',', $request->skill);
-//             $query->where(function($q) use ($skills) {
-//                 foreach ($skills as $skill) {
-//                     $q->orWhereJsonContains('profiles.skills_summary', trim($skill));
-//                 }
-//             });
-//         }}
+        if ($request->filled('min_experience')) {
+            $query->whereHas('skills', fn($q) => $q->where('profile_skills.experience_years', '>=', $request->min_experience));
+        }
 
+        $sortBy = $request->query('sort_by', 'latest');
+        $query = match ($sortBy) {
+            'rating' => $query->orderByDesc('reviews_avg_rate'),
+            'projects' => $query->orderByDesc('completed_projects_count'),
+            'experience' => $query->orderByDesc('profile.experience_years'),
+            default => $query->latest(),
+        };
 
-
-
+        return $query->paginate(15);
+    }
 }

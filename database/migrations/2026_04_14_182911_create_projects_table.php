@@ -29,7 +29,7 @@ return new class extends Migration
 
 
 
-            $table->enum('status',ProjectStatusEnum::getValues())->default(ProjectStatusEnum::OPEN->value);
+            $table->enum('status',ProjectStatusEnum::getValues())->default(ProjectStatusEnum::OPEN);
 
             $table->timestamps();
             $table->softDeletes();

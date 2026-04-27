@@ -2,7 +2,12 @@
 
 namespace App\Http\Api\Controllers;
 
+use App\Actions\Skill\AddSkills;
+use App\Actions\Skill\UpdateSkills;
 use App\Http\Api\Controllers\Controller;
+use App\Http\Requests\StoreSkillRequest;
+use App\Http\Requests\UpdateSkillRequest;
+use App\Models\Profile;
 use App\Models\Skill;
 use Illuminate\Http\Request;
 
@@ -27,9 +32,10 @@ class SkillController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AddSkills $action ,StoreSkillRequest $request,$profile)
     {
-        //
+$skills=$action->add($request->validated(),$profile);
+return response()->json($skills);
     }
 
     /**
@@ -51,9 +57,10 @@ class SkillController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Skill $skill)
+    public function update(UpdateSkills $action ,UpdateSkillRequest $request,Profile $profile)
     {
-        //
+       $skills=$action->update($request->validated(),$skill);
+       return response()->json($skills);
     }
 
     /**

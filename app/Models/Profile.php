@@ -42,20 +42,23 @@ public function rating(): Attribute
 {
     return Attribute::make(
         get: function () {
-      if (!$this->reviews_avg_rate) {
+            $avgRate = $this->reviews_avg_rate ?? null;
+            $count = $this->reviews_count ?? 0;
+
+            if (!$avgRate) {
+                return [
+                    'average' => null,
+                    'count' => 0,
+                    'message' => 'No reviews yet',
+                ];
+            }
+
             return [
-                'average' => null,
-                'count' => 0,
-                'message' => 'No reviews yet',
+                'average' => round($avgRate, 1),
+                'count' => $count,
+                'stars' => str_repeat('⭐', round($avgRate)),
             ];
         }
-
-        return [
-            'average' => round($this->reviews_avg_rate, 1),
-            'count' => $this->reviews_count,
-            'stars' => str_repeat('⭐', round($this->reviews_avg_rate)),
-        ];    }
-
     );
 }
 

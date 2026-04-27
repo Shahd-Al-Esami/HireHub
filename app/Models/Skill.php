@@ -11,7 +11,7 @@ class Skill extends Model
 {
     protected $fillable = ['name'];
 
-       public function profile(): BelongsToMany
+       public function profiles(): BelongsToMany
     {
         return $this->belongsToMany(Profile::class,'profile_skills')->withPivot('experience_years');
     }

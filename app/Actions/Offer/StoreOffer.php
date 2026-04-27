@@ -9,15 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class StoreOffer{
 
-public function store(array $data,$project_id){
+public function store(array $data,int $project_id)
+{
       $offer = Offer::create([
                     'project_id'    => $project_id,
-                    'freelancer_id' => Auth::id(),
-                    'status'        => OfferStatusEnum::PENDING->value, // الحالة الافتراضية
+                    'freelancer_id' => Auth::user()->id,
+                    'status'        => OfferStatusEnum::PENDING,
                     'cover_letter'  => $data['cover_letter'],
                     'price'         => $data['price'],
                     'delivery_time' => $data['delivery_time'],
                 ]);
+                
 
 return $offer;
 }

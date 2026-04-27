@@ -2,21 +2,20 @@
 
 
 use App\Http\Api\AuthController;
+use App\Http\Api\Controllers\DashboardController;
 use App\Http\Api\Controllers\OfferController;
 use App\Http\Api\Controllers\ProfileController;
 use App\Http\Api\Controllers\ProjectController;
+use App\Http\Api\Controllers\SkillController;
 use App\Http\Api\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Route::prefix('freelancers')->group(function () {
 
 
-// });
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
 
 
 
@@ -29,17 +28,20 @@ Route::prefix('v1')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
         Route::post('login',    [AuthController::class, 'login']);
 
+Route::get('projects', [ProjectController::class, 'index'])->name('projects.index')->middleware('logApi');
+Route::get('/show-project/{project}', [ProjectController::class, 'show'])->middleware('logApi');
 
 //endpoints
-//for projects
-    Route::middleware('auth:sanctum')->group(function () {
 
-Route::get('/show-project/{project}', [ProjectController::class, 'show'])->middleware('logApi');
+//for projects
+ Route::middleware('auth:sanctum')->group(function () {
+
+
 
 Route::post('/store-project', [ProjectController::class, 'store'])->middleware('logApi');
 
 
-Route::get('open-projects', [ProjectController::class, 'getOpenProjects'])->name('getOpenProjects')->middleware('logApi');
+// Route::get('open-projects', [ProjectController::class, 'getOpenProjects'])->name('getOpenProjects')->middleware('logApi');
 Route::get('projects/min-budget/{amount}', [ProjectController::class, 'getProjectsByMinBudget'])->name('getProjectsByMinBudget')->middleware('logApi');
 Route::get('projects/this-month', [ProjectController::class, 'getProjectsByThisMonth'])->name('getProjectsByThisMonth')->middleware('logApi');
 
@@ -48,21 +50,32 @@ Route::get('projects/this-month', [ProjectController::class, 'getProjectsByThisM
 Route::get('top-rated', [ProfileController::class, 'getTopRatedFreelancers'])->name('freelancers.profile.top-rated')->middleware('logApi');
 Route::get('available-freelancers', [ProfileController::class, 'getAvailableFreelancers'])->name('freelancers.profile.available')->middleware('logApi');
 
-Route::get('{profile}', [ProfileController::class, 'show'])->name('freelancers.profile.show');
 
 //freelancers:verified
+Route::get('show/{profile}', [ProfileController::class, 'show'])->name('freelancers.profile.show');
+
 Route::get('freelancers', [UserController::class, 'activeVerifiedFreelancers'])->middleware('logApi');
 
+Route::put('/update-profile/{profile}', [ProfileController::class, 'update'])->middleware('FreelancerIsVerified');
+
+//skills
+Route::post('/add-skills/{profile}', [SkillController::class, 'store'])->middleware('FreelancerIsVerified');
+Route::put('/update-skills/{profile}/{skill}', [SkillController::class, 'update'])->middleware('FreelancerIsVerified');
+
+//offer endpoints
+Route::get('show-offer/{offer}', [OfferController::class, 'show'])->middleware('logApi');
+ Route::post('store-offer-project/{project_id}', [OfferController::class, 'store'])->middleware('FreelancerIsVerified');
+
+Route::post('accept-offer/{offer}', [OfferController::class, 'acceptOffer'])->middleware('logApi');
+Route::post('reject-offer/{offer}', [OfferController::class, 'rejectOffer'])->middleware('logApi');
 
 
-
-Route::middleware(['auth:sanctum', 'FreelancerIsVerified'])->group(function () {
-    Route::post('/store-offer/{project_id}', [OfferController::class, 'store'])->middleware('logApi');
-
-    Route::put('/update-profile/{profile}', [ProfileController::class, 'update']);
-});
+//for admins
+Route::get('/admin/stats', [DashboardController::class, 'index'])->middleware('IsAdmin');
 
     });
+
+
 
 
 

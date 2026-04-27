@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\FreelancerIsVerified;
+use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\LogApiRequest;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     $middleware->alias([
         'logApi' => LogApiRequest::class,
         'FreelancerIsVerified' => FreelancerIsVerified::class,
+        'IsAdmin' => IsAdmin::class,
 
     ]);
 })

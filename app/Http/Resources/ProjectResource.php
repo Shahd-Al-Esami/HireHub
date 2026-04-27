@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\AttachmentResource;
 use App\Http\Resources\TagResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,7 +33,9 @@ class ProjectResource extends JsonResource
             ],
 
             'offers_count'   => $this->offers_count ?? 0,
-            'rating'        => $this->whenLoaded('review', fn() => $this->review->rate),
+            'offer'=> $this->whenLoaded('offers', fn() => OfferResource::collection($this->offers)),
+            'review'        => $this->whenLoaded('review', fn() => [$this->review->rate,$this->review->comment]),
+          'attachments'   => $this->whenLoaded('attachments', fn() => AttachmentResource::collection($this->attachments)),
 
             'tags'              => $this->whenLoaded('tags', fn() => TagResource::collection($this->tags)),
             'status'            => $this->status,

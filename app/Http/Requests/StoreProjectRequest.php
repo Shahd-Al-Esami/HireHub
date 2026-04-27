@@ -14,7 +14,7 @@ class StoreProjectRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-  
+
     public function authorize(): bool
     {
         $user = Auth::user();
@@ -27,7 +27,7 @@ class StoreProjectRequest extends FormRequest
             $this->throwApi(403, 'غير مصرح: هذا الإجراء مخصص للعملاء (Clients) فقط.');
         }
 
-        return true;  
+        return true;
           }
 
     protected function throwApi(int $status, string $message): void
@@ -48,7 +48,7 @@ class StoreProjectRequest extends FormRequest
             ]);
         }
 
-        // 2. Set default status (users shouldn't control initial status)
+    //     // 2. Set default status (users shouldn't control initial status)
         $this->merge([
             'status' => 'open',
         ]);
@@ -66,19 +66,18 @@ class StoreProjectRequest extends FormRequest
         $isHourly = $this->input('budget_type') === 'hourly';
 
          return [
-            'client_id' => ['required','exists:users,id'],
+            'client_id' => ['exists:users,id'],
           'title' => [
             'required', 'string', 'min:10', 'max:150',
             new NotOffensive(),
         ],
 
             'description' => [
-                'required', 'string', 'min:50', 'max:5000',
-                new NotOffensive(),
-            ],
+            'required', 'string', 'min:50', 'max:5000',
+            new NotOffensive(),
+        ],
 
-          'budget_type' => ['required', Rule::in(['fixed', 'hourly'])],
-
+          'budget_type' => ['required', 'string', Rule::in(['fixed', 'hourly'])],
             'budget_amount' => [
                 'required',
                 'numeric',
@@ -94,11 +93,11 @@ class StoreProjectRequest extends FormRequest
             ],
 
               'delivery_date' => ['required', 'date', 'after:today'],
-              'status' => ['required','in:open,in_progress,closed'],
+              'status' => ['sometimes','in:open,in_progress,closed'],
 
 
              'tags' => ['nullable', 'array', 'max:5'],
-            'tags.*' => ['string', 'max:30'],
+            'tags.*' => ['integer','exists:tags,id','distinct'],
         ];
     }
 
@@ -107,10 +106,28 @@ class StoreProjectRequest extends FormRequest
        public function messages(): array
     {
         return [
-            'deadline.after' => 'The delivery deadline must be a future date.',
+            // Required field messages
+            'title.required' => 'The title field is required.',
+            'description.required' => 'The description field is required.',
+            'budget_type.required' => 'The budget type field is required.',
+            'budget_amount.required' => 'The budget amount field is required.',
+            'delivery_date.required' => 'The delivery date field is required.',
+
+            // Validation messages
+            'delivery_date.after' => 'The delivery date must be a future date.',
             'tags.max' => 'You can attach a maximum of 5 tags.',
             'title.min' => 'The project title must be at least 10 characters to be clear.',
+            'title.max' => 'The project title must not exceed 150 characters.',
             'description.min' => 'Please provide a more detailed description so freelancers can submit accurate proposals.',
+            'description.max' => 'The description must not exceed 5000 characters.',
+            'budget_type.in' => 'The budget type must be either fixed or hourly.',
+            'budget_amount.numeric' => 'The budget amount must be a number.',
+            'budget_amount.min' => 'The budget amount must be a positive value.',
+            'delivery_date.date' => 'The delivery date must be a valid date.',
+            'status.in' => 'The status must be one of: open, in_progress, closed.',
+            'tags.array' => 'Tags must be an array.',
+            'tags.*.string' => 'Each tag must be a string.',
+            'tags.*.max' => 'Each tag must not exceed 30 characters.',
         ];
     }
 }
