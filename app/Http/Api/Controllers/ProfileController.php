@@ -4,6 +4,7 @@ namespace App\Http\Api\Controllers;
 
 use App\Actions\Profile\ShowProfileFreelancer;
 use App\Actions\Profile\UpdateProfile;
+use App\Actions\Profile\UpdateStatus;
 use App\Http\Api\Controllers\Controller;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\ProfileResource;
@@ -23,15 +24,17 @@ $this->service = $service;
     }
 
 /**
- * Summary of getAvailableFreelancers
- * @return \Illuminate\Http\JsonResponse
+ * Summary of updateStatus
+ * @param UpdateStatus $action
+ * @param Profile $profile
+ * @param Request $request
+ * @return ProfileResource
  */
-public function getAvailableFreelancers(){
-
-     $availableFreelancers= $this->service->availableFreelancers();
-return response()->json($availableFreelancers);
-
+public function updateStatus(UpdateStatus $action,Profile $profile,Request $request){
+    $updatedProfile=$action->updateStatus($profile,$request->only('availability_status'));
+    return new ProfileResource($updatedProfile);
 }
+
 /**
  * Summary of getTopRatedFreelancers
  * @return \Illuminate\Http\JsonResponse
@@ -40,8 +43,7 @@ public function getTopRatedFreelancers(Request $request){
 
      $topRatedFreelancers= $this->service->topRatedFreelancers($request);
          return ProfileResource::collection($topRatedFreelancers);
-// return response()->json($topRatedFreelancers);
-// return 'hh';
+
 }
 
 

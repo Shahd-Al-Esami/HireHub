@@ -1,19 +1,20 @@
 <?php
 namespace App\Services;
 
-use App\Contracts\NotificationServiceInterface;
 use App\Contracts\OfferRepositoryInterface;
 use App\Models\Offer;
 use App\Models\Project;
 use App\Notifications\OfferAcceptedNotification;
 use App\Notifications\OfferCreatedNotification;
 use App\Notifications\OfferRejectedNotification;
+use App\Repositories\OfferRepository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class OfferService{
 
 
-    public function __construct(protected NotificationServiceInterface $notification,protected OfferRepositoryInterface $repo)
+    public function __construct(protected OfferRepository $repo)
     {
     }
 
@@ -37,7 +38,11 @@ public function acceptOffer(Offer $offer)
             Offer::where('project_id', $offer->project_id)
                 ->where('id', '!=', $offer->id)
                 ->update(['status' => 'rejected']);
+
+
 $offer->user->notify(new OfferAcceptedNotification($offer));
+             Cache::tags(['projects'])->flush();
+
 
             return $offer;
         });

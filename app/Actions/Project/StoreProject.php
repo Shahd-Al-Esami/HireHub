@@ -3,6 +3,7 @@ namespace App\Actions\Project;
 
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class StoreProject{
@@ -26,12 +27,13 @@ class StoreProject{
             if (!empty($tagIds)) {
                 $project->tags()->attach($tagIds);
             }
-
+            //flush cache for open projects to get the new project in the list of open projects
+             Cache::tags(['projects'])->flush();
             return $project;
         });
 
 
-    
+
     }
 
     }

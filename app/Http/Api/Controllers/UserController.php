@@ -12,9 +12,9 @@ protected UserService $service;
     public function __construct(UserService $service) {
 $this->service = $service;
     }
-public function activeVerifiedFreelancers(Request $request)
+public function availableFreelancers(Request $request)
 {
-    $users = $this->service->activeVerifiedFreelancers($request);
+    $users = $this->service->availableFreelancers($request);
     return response()->json($users);
 }
 

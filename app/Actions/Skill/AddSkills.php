@@ -3,6 +3,7 @@
 namespace App\Actions\Skill;
 
 use App\Models\Skill;
+use Illuminate\Support\Facades\Cache;
 
 class AddSkills
 {
@@ -20,6 +21,7 @@ class AddSkills
         $profile->skills()->attach($skill->id, [
             'experience_years' => $data['experience_years'] ?? 0,
         ]);
+    Cache::tags(['freelancers'])->flush();
 
         return $skill;
     }

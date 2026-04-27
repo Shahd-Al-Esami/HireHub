@@ -2,8 +2,9 @@
 
 namespace App\Actions\Skill;
 
-use App\Models\Skill;
 use App\Models\Profile;
+use App\Models\Skill;
+use Illuminate\Support\Facades\Cache;
 
 class UpdateSkills
 {
@@ -31,6 +32,7 @@ class UpdateSkills
                 $skill->id => ['experience_years' => $data['experience_years']],
             ]);
         }
+    Cache::tags(['freelancers'])->flush();
 
         return $skill->fresh();
     }

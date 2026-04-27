@@ -2,6 +2,7 @@
 namespace App\Actions\Project;
 
 use App\Models\Project;
+use Illuminate\Support\Facades\Cache;
 
 class IndexProjects
 {
@@ -35,11 +36,18 @@ class IndexProjects
 //get only id and name of tags to reduce the amount of data loaded
 //get only id and file_path of attachments to reduce the amount of data loaded
 
+$page = request('page', 1);
+
+$projects=Cache::tags(['projects'])->remember("open_projects_page_{$page}", now()->addMinutes(5), function () {
      $projects= Project::openProjects()->with(['user:id,first_name,last_name','tags:id,name'])
     ->withCount('offers')->withAvg('review', 'rate')->latest()
     ->paginate(15);
+
+    });
     return $projects;
 
-    }
+
+}
+
 
 }

@@ -18,18 +18,21 @@ protected ProjectService $service;
     public function __construct(ProjectService $service) {
 $this->service = $service;
     }
-
+//get open projects
     public function index(IndexProjects $action)
     {
         $projects = $action->index();
         return ProjectResource::collection($projects);
 
     }
-    public function getOpenProjects()
-    {
-        $projects = $this->service->getOpenProjects();
-    return ProjectResource::collection($projects);
-    }
+
+
+
+    // public function getOpenProjects()
+    // {
+    //     $projects = $this->service->getOpenProjects();
+    // return ProjectResource::collection($projects);
+    // }
 
    public function getProjectsByMinBudget($amount)
     {

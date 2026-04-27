@@ -28,12 +28,11 @@ Route::prefix('v1')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
         Route::post('login',    [AuthController::class, 'login']);
 
+//open projects
 Route::get('projects', [ProjectController::class, 'index'])->name('projects.index')->middleware('logApi');
 Route::get('/show-project/{project}', [ProjectController::class, 'show'])->middleware('logApi');
 
-//endpoints
 
-//for projects
  Route::middleware('auth:sanctum')->group(function () {
 
 
@@ -41,20 +40,18 @@ Route::get('/show-project/{project}', [ProjectController::class, 'show'])->middl
 Route::post('/store-project', [ProjectController::class, 'store'])->middleware('logApi');
 
 
-// Route::get('open-projects', [ProjectController::class, 'getOpenProjects'])->name('getOpenProjects')->middleware('logApi');
 Route::get('projects/min-budget/{amount}', [ProjectController::class, 'getProjectsByMinBudget'])->name('getProjectsByMinBudget')->middleware('logApi');
 Route::get('projects/this-month', [ProjectController::class, 'getProjectsByThisMonth'])->name('getProjectsByThisMonth')->middleware('logApi');
 
 //freelancer
 
 Route::get('top-rated', [ProfileController::class, 'getTopRatedFreelancers'])->name('freelancers.profile.top-rated')->middleware('logApi');
-Route::get('available-freelancers', [ProfileController::class, 'getAvailableFreelancers'])->name('freelancers.profile.available')->middleware('logApi');
 
 
 //freelancers:verified
 Route::get('show/{profile}', [ProfileController::class, 'show'])->name('freelancers.profile.show');
-
-Route::get('freelancers', [UserController::class, 'activeVerifiedFreelancers'])->middleware('logApi');
+//available freelancers
+Route::get('availableFreelancers', [UserController::class, 'availableFreelancers'])->middleware('logApi');
 
 Route::put('/update-profile/{profile}', [ProfileController::class, 'update'])->middleware('FreelancerIsVerified');
 
@@ -62,7 +59,7 @@ Route::put('/update-profile/{profile}', [ProfileController::class, 'update'])->m
 Route::post('/add-skills/{profile}', [SkillController::class, 'store'])->middleware('FreelancerIsVerified');
 Route::put('/update-skills/{profile}/{skill}', [SkillController::class, 'update'])->middleware('FreelancerIsVerified');
 
-//offer endpoints
+//offer
 Route::get('show-offer/{offer}', [OfferController::class, 'show'])->middleware('logApi');
  Route::post('store-offer-project/{project_id}', [OfferController::class, 'store'])->middleware('FreelancerIsVerified');
 
